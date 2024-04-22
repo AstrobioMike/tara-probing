@@ -1,0 +1,37 @@
+conda create -n pysradb -c conda-forge -c bioconda -c defaults pysradb python=3.10 -y
+
+conda activate pysradb
+
+### getting stuff for PRJEB9740, the polar prokaryotic one with 41 samples
+pysradb metadata --detailed PRJEB9740 > PRJEB9740-metadata.tsv
+
+# that gets me all the run accessions, but doesn't get me the biosample info
+# from the ncbi PRJ page, i clicked to biosample-linked info, then sent to file (can't find tsv, took xml to parse)
+https://www.ncbi.nlm.nih.gov/biosample?LinkName=bioproject_biosample_all&from_uid=288558
+
+    # saved to PRJEB9740-biosample-data.xml
+
+# then wrote a script to parse the xml and get the biosample info into a table
+python parsing-biosample-xml.py -i PRJEB9740-biosample-data.xml -o PRJEB9740-biosample-data.tsv
+
+# then made a quick map (did `conda install -c conda-forge folium pandas geopy` in base)
+python quick-map-plot.py -i PRJEB9740-biosample-data.tsv -o PRJEB9740-map.html
+
+
+### now doing the same for the broader sampling, PRJEB1787, 136 unique sample sites, there are 250 runs though (3 are 454 data i won't use)
+pysradb metadata --detailed PRJEB1787 > PRJEB1787-metadata.tsv
+
+# got the biosample info from ncbi in xml format again from here
+https://www.ncbi.nlm.nih.gov/biosample?LinkName=bioproject_biosample_all&from_uid=196960
+
+    # saved to PRJEB1787-biosample-data.xml
+
+# then parsed with same script as above
+python parsing-biosample-xml.py -i PRJEB1787-biosample-data.xml -o PRJEB1787-biosample-data.tsv
+
+# removing the ones that are not the right filter size
+awk -F'\t' 'NR==1 || ($17 == "0.22" && $18 == "3") {print $0}' PRJEB1787-biosample-data.tsv > t && mv t PRJEB1787-biosample-data.tsv
+    # that also got rid of the 3 454 samples
+
+# and making a map
+python quick-map-plot.py -i PRJEB1787-biosample-data.tsv -o PRJEB1787-map.html
