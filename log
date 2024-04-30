@@ -35,3 +35,18 @@ awk -F'\t' 'NR==1 || ($17 == "0.22" && $18 == "3") {print $0}' PRJEB1787-biosamp
 
 # and making a map
 python quick-map-plot.py -i PRJEB1787-biosample-data.tsv -o PRJEB1787-map.html
+
+#### focusing on arctic, PRJEB9740
+comm -23 PRJEB9740-all-biosamples.txt PRJEB9740-not-wanted-biosamples.txt > PRJEB9740-wanted-biosamples.txt
+
+for acc in $(cat PRJEB9740-wanted-biosamples.txt); do grep ${acc} PRJEB9740-metadata.tsv | cut -f 1; done > runs.tmp
+
+cat <( printf "run_accession\n" ) runs.tmp > t && mv t runs.tmp 
+
+for acc in $(cat PRJEB9740-wanted-biosamples.txt); do grep ${acc} PRJEB9740-biosample-data.tsv ; done > biosample-data.tmp
+
+cat <( head -n 1 PRJEB9740-biosample-data.tsv ) biosample-data.tmp > t && mv t biosample-data.tmp
+
+paste biosample-data.tmp runs.tmp > PRJEB9740-subset-biosample-data.tsv
+
+rm *.tmp

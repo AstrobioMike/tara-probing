@@ -1,0 +1,23 @@
+i'm doing the work on a jetstream instance on the jpl allocation
+
+ssh mike@149.165.174.197  (jpl2024 if needed, but i have a key set up from my person comp)
+
+- focusing on the arctic samples, dropping those super close to land (arbitrarily) and those indicated as "MIX" or "ZZZ"
+- so keeping SRF, DCM, and MES
+- ones to drop are in PRJEB9740-not-wanted-biosamples.txt
+- ones wanted are in PRJEB9740-wanted-biosamples.txt
+
+
+- download running on server - DONE
+- MG workflow kicked off Saturday, 27-Apr
+
+    - something caused things to crash on monday, 29-Apr
+        - i think it was related to the boot/root drive getting filled, maybe by temp stuff
+        - i lost access to the shared drive on that instance, when i launched another instance I was able to restart the workflow
+        
+        NOW ON: mike@149.165.168.116
+        
+
+- also started the sra-download workflow on the belly
+
+        
