@@ -14,6 +14,12 @@ https://www.ncbi.nlm.nih.gov/biosample?LinkName=bioproject_biosample_all&from_ui
 # then wrote a script to parse the xml and get the biosample info into a table
 python parsing-biosample-xml.py -i PRJEB9740-biosample-data.xml -o PRJEB9740-biosample-data.tsv
 
+# adding a sample-ID column that combines the "sample_station" with the "depth_indicator"
+cat <( printf "sample-ID\n" ) <( paste -d "_" <( cut -f 4 PRJEB9740-biosample-data.tsv | tail -n +2 ) <( cut -f 20 PRJEB9740-biosample-data.tsv | tail -n +2 ) ) > new-col.tmp
+paste PRJEB9740-biosample-data.tsv new-col.tmp > t && mv t PRJEB9740-biosample-data.tsv 
+rm new-col.tmp
+
+
 # then made a quick map (did `conda install -c conda-forge folium pandas geopy` in base)
 python quick-map-plot.py -i PRJEB9740-biosample-data.tsv -o PRJEB9740-map.html
 
@@ -33,6 +39,11 @@ python parsing-biosample-xml.py -i PRJEB1787-biosample-data.xml -o PRJEB1787-bio
 awk -F'\t' 'NR==1 || ($17 == "0.22" && $18 == "3") {print $0}' PRJEB1787-biosample-data.tsv > t && mv t PRJEB1787-biosample-data.tsv
     # that also got rid of the 3 454 samples
 
+# adding a sample-ID column that combines the "sample_station" with the "depth_indicator"
+cat <( printf "sample-ID\n" ) <( paste -d "_" <( cut -f 4 PRJEB1787-biosample-data.tsv | tail -n +2 ) <( cut -f 20 PRJEB1787-biosample-data.tsv | tail -n +2 ) ) > new-col.tmp
+paste PRJEB1787-biosample-data.tsv new-col.tmp > t && mv t PRJEB1787-biosample-data.tsv 
+rm new-col.tmp
+
 # and making a map
 python quick-map-plot.py -i PRJEB1787-biosample-data.tsv -o PRJEB1787-map.html
 
@@ -50,3 +61,4 @@ cat <( head -n 1 PRJEB9740-biosample-data.tsv ) biosample-data.tmp > t && mv t b
 paste biosample-data.tmp runs.tmp > PRJEB9740-subset-biosample-data.tsv
 
 rm *.tmp
+
